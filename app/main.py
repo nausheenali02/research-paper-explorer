@@ -1,13 +1,11 @@
 from app.graph.workflow import build_graph
 
 def main():
-
+    
     graph = build_graph()
-
     result = graph.invoke({
         "query": "Find recent papers on RAG hallucination and compare their approaches."
     })
-
     print("\n")
     print("=" * 80)
     print("                 RESEARCH PAPER EXPLORER")
@@ -31,7 +29,7 @@ def main():
 
     # Relevant Papers and Summaries
     print("\n" + "=" * 80)
-    print("RELEVANT RESEARCH PAPERS")
+    print("RELEVANT RESEARCH SOURCES")
     print("=" * 80)
 
     for i, paper in enumerate(result["relevant_papers"], start=1):
@@ -41,7 +39,8 @@ def main():
         print(f"{'-' * 80}")
 
         print(f"\nTitle:\n{paper['title']}")
-        print(f"\nAuthors:\n{', '.join(paper['authors'])}")
+        print(f"\nSource type:\n{paper.get('source_type', 'unknown')}")
+        print(f"\nAuthors:\n{', '.join(paper.get('authors', [])) or 'Not provided by source'}")
         print(f"\nURL:\n{paper['url']}")
 
         summary = result["summaries"][i - 1]
@@ -76,7 +75,6 @@ def main():
     print("\n" + "=" * 80)
     print("RESEARCH COMPLETE")
     print("=" * 80)
-
-
+    
 if __name__ == "__main__":
     main()

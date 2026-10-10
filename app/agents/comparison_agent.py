@@ -3,8 +3,29 @@ from app.models import Comparison
 
 
 def comparison_agent(state):
-
+    
     summaries = state["summaries"]
+
+    if not summaries:
+        print("\nNo summaries available for comparison.")
+        return {
+            "comparison": Comparison(
+                overall_comparison="No relevant sources were found to compare.",
+                similarities=[],
+                differences=[],
+                best_approach="Not enough information to determine."
+            )
+        }
+    if len(summaries) == 1:
+        print("\nOnly one relevant source found. Skipping comparison.")
+        return {
+          "comparison": Comparison(
+            overall_comparison="Only one relevant source was found. A cross-paper comparison is not possible.",
+            similarities=[],
+            differences=[],
+            best_approach="Not enough sources to determine."
+        )
+    }
 
     print("\nComparing research papers...")
 
@@ -60,6 +81,10 @@ def comparison_agent(state):
 
     structured_model = model.with_structured_output(Comparison)
 
-    response = structured_model.invoke(prompt)
+    try:
+      response = structured_model.invoke(prompt)
+    except Exception as e:
+      print(f"Paper comparison failed: {e}")
+      raise
 
     return {"comparison": response}

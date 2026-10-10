@@ -20,10 +20,17 @@ def research_planner(state):
 
     Decide which sources should be searched.
 
-    Available sources:
+    
+    Available sources (choose only from this list):
     - arxiv
     - web
-    - local_vector_db
+
+   Rules:
+   - Select only sources listed above.
+   - Do not return local_vector_db or any other unsupported source.
+   - Return source names exactly as written.
+
+    
 
     Return:
     1. A concise search plan
@@ -32,7 +39,11 @@ def research_planner(state):
 
     structured_model = model.with_structured_output(ResearchPlan)
 
-    response = structured_model.invoke(prompt)
+    try:
+      response = structured_model.invoke(prompt)
+    except Exception as e:
+      print(f"Research planning failed: {e}")
+      raise
 
     print("\n--- Research Plan ---")
     print("Plan:", response.search_plan)

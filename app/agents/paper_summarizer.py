@@ -3,8 +3,12 @@ from app.models import PaperSummary
 
 
 def paper_summarizer(state):
-
     papers = state["relevant_papers"]
+
+    if not papers:
+        print("\nNo relevant sources available to summarize.")
+        return {"summaries": []}
+
     summaries = []
 
     structured_model = model.with_structured_output(PaperSummary)
@@ -36,7 +40,11 @@ def paper_summarizer(state):
         Return a structured research summary.
         """
 
-        response = structured_model.invoke(prompt)
+        try:
+         response = structured_model.invoke(prompt)
+        except Exception as e:
+         print(f"Paper summarization failed: {e}")
+         continue
         summaries.append(response)
 
     print(f"\nGenerated summaries: {len(summaries)}")

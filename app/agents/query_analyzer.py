@@ -1,7 +1,6 @@
 from app.llm import model
 from app.models import QueryAnalysis
 
-
 def query_analyzer(state):
 
     query = state["query"]
@@ -20,7 +19,11 @@ def query_analyzer(state):
 
     structured_model = model.with_structured_output(QueryAnalysis)
 
-    response = structured_model.invoke(prompt)
+    try:
+      response = structured_model.invoke(prompt)
+    except Exception as e:
+      print(f"Query analysis failed: {e}")
+      raise
 
     print("\n--- Query Analysis ---")
     print("Topic:", response.topic)
